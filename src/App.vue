@@ -1,11 +1,41 @@
 <template>
   <div class="container mx-auto flex flex-col items-center bg-gray-100 p-4">
-    <!-- <div class="fixed w-100 h-100 opacity-80 bg-purple-800 inset-0 z-50 flex items-center justify-center">
-    <svg class="animate-spin -ml-1 mr-3 h-12 w-12 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-    </svg>
-  </div> -->
+    <div
+      v-if="null"
+      class="
+        fixed
+        w-100
+        h-100
+        opacity-80
+        bg-purple-800
+        inset-0
+        z-50
+        flex
+        items-center
+        justify-center
+      "
+    >
+      <svg
+        class="animate-spin -ml-1 mr-3 h-12 w-12 text-white"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"
+        ></circle>
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+    </div>
     <div class="container">
       <section>
         <div class="flex">
@@ -17,47 +47,135 @@
               <input
                 v-model="ticker"
                 v-on:keydown.enter="add"
+                v-on:click="
+                  (showRepeatMessage = null),
+                    (showEmptyInputMessage = null),
+                    loadList()
+                "
+                v-on:focus="displayPrompts"
                 type="text"
                 name="wallet"
                 id="wallet"
-                class="block w-full pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
+                class="
+                  block
+                  w-full
+                  pr-10
+                  border-gray-300
+                  text-gray-900
+                  focus:outline-none focus:ring-gray-500 focus:border-gray-500
+                  sm:text-sm
+                  rounded-md
+                "
                 placeholder="Например DOGE"
               />
             </div>
             <div
-              v-if="show"
+              v-on:click="loadList"
+              v-if="showPrompts"
               class="flex bg-white shadow-md p-1 rounded-md shadow-md flex-wrap"
             >
               <span
-                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
+                v-on:click="setTicker(cryptoNames[1])"
+                class="
+                  inline-flex
+                  items-center
+                  px-2
+                  m-1
+                  rounded-md
+                  text-xs
+                  font-medium
+                  bg-gray-300
+                  text-gray-800
+                  cursor-pointer
+                "
               >
-                BTC
+                {{ cryptoNames[1] }}
               </span>
               <span
-                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
+                v-on:click="setTicker(cryptoNames[2])"
+                class="
+                  inline-flex
+                  items-center
+                  px-2
+                  m-1
+                  rounded-md
+                  text-xs
+                  font-medium
+                  bg-gray-300
+                  text-gray-800
+                  cursor-pointer
+                "
               >
-                DOGE
+                {{ cryptoNames[2] }}
               </span>
               <span
-                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
+                v-on:click="setTicker(cryptoNames[3])"
+                class="
+                  inline-flex
+                  items-center
+                  px-2
+                  m-1
+                  rounded-md
+                  text-xs
+                  font-medium
+                  bg-gray-300
+                  text-gray-800
+                  cursor-pointer
+                "
               >
-                BCH
+                {{ cryptoNames[3] }}
               </span>
               <span
-                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
+                v-on:click="setTicker(cryptoNames[4])"
+                class="
+                  inline-flex
+                  items-center
+                  px-2
+                  m-1
+                  rounded-md
+                  text-xs
+                  font-medium
+                  bg-gray-300
+                  text-gray-800
+                  cursor-pointer
+                "
               >
-                CHD
+                {{ cryptoNames[4] }}
               </span>
             </div>
-            <div v-if="show" class="text-sm text-red-600">
+            <div v-if="showRepeatMessage" class="text-sm text-red-600">
               Такой тикер уже добавлен
+            </div>
+            <div v-if="showEmptyInputMessage" class="text-sm text-red-600">
+              Введите значение в поле
             </div>
           </div>
         </div>
         <button
-          v-on:click="add"
+          v-on:click="add(), hidePrompts()"
           type="button"
-          class="my-4 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+          class="
+            my-4
+            inline-flex
+            items-center
+            py-2
+            px-4
+            border border-transparent
+            shadow-sm
+            text-sm
+            leading-4
+            font-medium
+            rounded-full
+            text-white
+            bg-gray-600
+            hover:bg-gray-700
+            transition-colors
+            duration-300
+            focus:outline-none
+            focus:ring-2
+            focus:ring-offset-2
+            focus:ring-gray-500
+          "
         >
           <!-- Heroicon name: solid/mail -->
           <svg
@@ -85,7 +203,14 @@
             :class="{
               'border-4': sel == t,
             }"
-            class="bg-white overflow-hidden shadow rounded-lg border-purple-800 border-solid cursor-pointer"
+            class="
+              bg-white
+              overflow-hidden
+              shadow
+              rounded-lg
+              border-purple-800 border-solid
+              cursor-pointer
+            "
           >
             <div class="px-4 py-5 sm:p-6 text-center">
               <dt class="text-sm font-medium text-gray-500 truncate">
@@ -98,7 +223,21 @@
             <div class="w-full border-t border-gray-200"></div>
             <button
               v-on:click.stop="handleDelete(t)"
-              class="flex items-center justify-center font-medium w-full bg-gray-100 px-4 py-4 sm:px-6 text-md text-gray-500 hover:text-gray-600 hover:bg-gray-200 hover:opacity-20 transition-all focus:outline-none"
+              class="
+                flex
+                items-center
+                justify-center
+                font-medium
+                w-full
+                bg-gray-100
+                px-4
+                py-4
+                sm:px-6
+                text-md text-gray-500
+                hover:text-gray-600 hover:bg-gray-200 hover:opacity-20
+                transition-all
+                focus:outline-none
+              "
             >
               <svg
                 class="h-5 w-5"
@@ -174,41 +313,53 @@ export default {
         "https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD,JPY,EUR",
       apiKey:
         "c3d9e7f2d667ef49e6d841bcce9c57264551b304fbbc580037e992a6563ecc86",
-      show: null,
-      ticker: "",
-      tickers: [],
+      ticker: null,
       sel: null,
+      tickers: [],
       graph: [],
+      loader: [],
+      cryptoNames: [],
+      showRepeatMessage: "",
+      showEmptyInputMessage: "",
+      showPrompts: null,
     };
   },
 
   methods: {
     add() {
+      this.loadList();
       const currentTicker = {
         name: this.ticker,
         price: "--",
       };
 
-      setInterval(async () => {
-        const response = await fetch(
-          `https://min-api.cryptocompare.com/data/price?fsym=${currentTicker.name}&tsyms=USD&api_key=${this.apiKey}`
-        );
-        const data = await response.json();
+      this.repeatCheck();
+      this.inputCheck();
 
-        this.tickers.find(t => t.name === currentTicker.name).price =
-          data.USD > 1 ? data?.USD?.toFixed(2) : data?.USD?.toPrecision(2);
+      if (!this.findCoincidence().length && this.ticker) {
+        setInterval(async () => {
+          const response = await fetch(
+            `https://min-api.cryptocompare.com/data/price?fsym=${currentTicker.name}&tsyms=USD&api_key=${this.apiKey}`
+          );
+          const data = await response.json();
 
-        if (this.sel.name == currentTicker.name) {
-          this.graph.push(data.USD);
-        }
-      }, 3000);
+          this.tickers.find((t) => t.name === currentTicker.name).price =
+            data.USD > 1 ? data?.USD?.toFixed(2) : data?.USD?.toPrecision(2);
 
-      this.tickers.push(currentTicker);
-      this.ticker = "";
+          if (this.sel.name == currentTicker.name) {
+            this.graph.push(data.USD);
+          }
+        }, 3000);
+
+        this.tickers.push(currentTicker);
+        this.ticker = "";
+      }
     },
+
     handleDelete(elementToDelete) {
       this.tickers = this.tickers.filter((t) => t != elementToDelete);
     },
+
     normalizeGraph() {
       const maxValue = Math.max(...this.graph);
       const minValue = Math.min(...this.graph);
@@ -217,9 +368,58 @@ export default {
         (price) => 5 + ((price - minValue) * 95) / (maxValue - minValue)
       );
     },
+
     select(ticker) {
       this.sel = ticker;
       this.graph = [];
+    },
+
+    repeatCheck() {
+      let coincidence = this.findCoincidence();
+      if (coincidence.length) {
+        this.showRepeatMessage = "show";
+      } else {
+        this.showRepeatMessage = null;
+      }
+    },
+
+    inputCheck() {
+      if (!this.ticker) {
+        this.showEmptyInputMessage = "show";
+      } else {
+        this.showEmptyInputMessage = null;
+      }
+    },
+
+    findCoincidence() {
+      let coincidence = this.tickers.filter((t) => t.name == this.ticker);
+      return coincidence;
+    },
+
+    async loadList() {
+      const response = await fetch(
+        "https://min-api.cryptocompare.com/data/all/coinlist?summary=true"
+      );
+      const data = await response.json();
+      Object.keys(data.Data).forEach((key) => {
+        this.cryptoNames.push(key);
+      });
+    },
+
+    setTicker(newTicker) {
+      this.ticker = newTicker;
+    },
+
+    displayPrompts() {
+      this.showPrompts = "show";
+    },
+
+    hidePrompts() {
+      this.showPrompts = null;
+    },
+
+    addPrompts() {
+      return this.cryptoNames.filter((t) => t == this.ticker);
     },
   },
 };
