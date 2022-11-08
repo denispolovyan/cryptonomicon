@@ -46,11 +46,12 @@
             <div class="mt-1 relative rounded-md shadow-md">
               <input
                 v-model="ticker"
-                v-on:keydown.enter="add"
+                v-on:keydown.enter="add()"
+                v-on:keydown="sortPrompts()"
                 v-on:click="
                   (showRepeatMessage = null),
                     (showEmptyInputMessage = null),
-                    loadList()
+							sortPrompts()
                 "
                 v-on:focus="displayPrompts"
                 type="text"
@@ -71,9 +72,26 @@
             </div>
             <div
               v-on:click="loadList"
-              v-if="showPrompts"
+              v-if="showPrompts && checkArrLength"
               class="flex bg-white shadow-md p-1 rounded-md shadow-md flex-wrap"
             >
+              <span
+                v-on:click="setTicker(cryptoNames[0])"
+                class="
+                  inline-flex
+                  items-center
+                  px-2
+                  m-1
+                  rounded-md
+                  text-xs
+                  font-medium
+                  bg-gray-300
+                  text-gray-800
+                  cursor-pointer
+                "
+              >
+                {{ cryptoNames[0] }}
+              </span>
               <span
                 v-on:click="setTicker(cryptoNames[1])"
                 class="
@@ -124,23 +142,6 @@
                 "
               >
                 {{ cryptoNames[3] }}
-              </span>
-              <span
-                v-on:click="setTicker(cryptoNames[4])"
-                class="
-                  inline-flex
-                  items-center
-                  px-2
-                  m-1
-                  rounded-md
-                  text-xs
-                  font-medium
-                  bg-gray-300
-                  text-gray-800
-                  cursor-pointer
-                "
-              >
-                {{ cryptoNames[4] }}
               </span>
             </div>
             <div v-if="showRepeatMessage" class="text-sm text-red-600">
@@ -420,6 +421,23 @@ export default {
 
     addPrompts() {
       return this.cryptoNames.filter((t) => t == this.ticker);
+    },
+
+    sortPrompts() {
+		if(!this.ticker) {
+			this.loadList()
+		}
+		else {
+			this.cryptoNames = this.cryptoNames.filter(el => el.indexOf(this.ticker) != -1);
+		}
+    },
+
+    checkArrLength() {
+		if(this.cryptoNames.length){
+			return true;
+		} else {
+			return false;
+		}
     },
   },
 };
