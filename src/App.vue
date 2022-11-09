@@ -51,7 +51,7 @@
                 v-on:click="
                   (showRepeatMessage = null),
                     (showEmptyInputMessage = null),
-							sortPrompts()
+                    sortPrompts()
                 "
                 v-on:focus="displayPrompts"
                 type="text"
@@ -326,7 +326,34 @@ export default {
     };
   },
 
+  created() {
+    const tickersData = localStorage.getItem("cryptonomicon-list");
+    const tickers = JSON.parse(tickersData);
+    tickers.forEach((ticker) => {
+      this.tickers.push(ticker);
+    });
+    this.tickers.forEach((ticker => {
+		this.subscribeToUpdates(ticker);
+    }))
+  },
+
   methods: {
+    subscribeToUpdates(ticker) {
+      setInterval(async () => {
+        const response = await fetch(
+          `https://min-api.cryptocompare.com/data/price?fsym=${ticker.name}&tsyms=USD&api_key=${this.apiKey}`
+        );
+        const data = await response.json();
+
+        this.tickers.find((t) => t.name === ticker.name).price =
+          data.USD > 1 ? data?.USD?.toFixed(2) : data?.USD?.toPrecision(2);
+
+        if (this.sel.name == ticker.name) {
+          this.graph.push(data.USD);
+        }
+      }, 3000);
+    },
+
     add() {
       this.loadList();
       const currentTicker = {
@@ -338,23 +365,11 @@ export default {
       this.inputCheck();
 
       if (!this.findCoincidence().length && this.ticker) {
-        setInterval(async () => {
-          const response = await fetch(
-            `https://min-api.cryptocompare.com/data/price?fsym=${currentTicker.name}&tsyms=USD&api_key=${this.apiKey}`
-          );
-          const data = await response.json();
-
-          this.tickers.find((t) => t.name === currentTicker.name).price =
-            data.USD > 1 ? data?.USD?.toFixed(2) : data?.USD?.toPrecision(2);
-
-          if (this.sel.name == currentTicker.name) {
-            this.graph.push(data.USD);
-          }
-        }, 3000);
-
+        this.subscribeToUpdates(currentTicker);
         this.tickers.push(currentTicker);
         this.ticker = "";
       }
+      localStorage.setItem("cryptonomicon-list", JSON.stringify(this.tickers));
     },
 
     handleDelete(elementToDelete) {
@@ -424,20 +439,21 @@ export default {
     },
 
     sortPrompts() {
-		if(!this.ticker) {
-			this.loadList()
-		}
-		else {
-			this.cryptoNames = this.cryptoNames.filter(el => el.indexOf(this.ticker) != -1);
-		}
+      if (!this.ticker) {
+        this.loadList();
+      } else {
+        this.cryptoNames = this.cryptoNames.filter(
+          (el) => el.indexOf(this.ticker) != -1
+        );
+      }
     },
 
     checkArrLength() {
-		if(this.cryptoNames.length){
-			return true;
-		} else {
-			return false;
-		}
+      if (this.cryptoNames.length) {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
 };
