@@ -2,18 +2,7 @@
   <div class="container mx-auto flex flex-col items-center bg-gray-100 p-4">
     <div
       v-if="null"
-      class="
-        fixed
-        w-100
-        h-100
-        opacity-80
-        bg-purple-800
-        inset-0
-        z-50
-        flex
-        items-center
-        justify-center
-      "
+      class="fixed w-100 h-100 opacity-80 bg-purple-800 inset-0 z-50 flex items-center justify-center"
     >
       <svg
         class="animate-spin -ml-1 mr-3 h-12 w-12 text-white"
@@ -47,26 +36,15 @@
               <input
                 v-model="ticker"
                 v-on:keydown.enter="add()"
-                v-on:keydown="sortPrompts()"
+                v-on:keydown="sortPrompts(cryptoNames)"
                 v-on:click="
-                  (showRepeatMessage = null),
-                    (showEmptyInputMessage = null),
-                    sortPrompts()
+                  (showRepeatMessage = null), (showEmptyInputMessage = null)
                 "
                 v-on:focus="displayPrompts"
                 type="text"
                 name="wallet"
                 id="wallet"
-                class="
-                  block
-                  w-full
-                  pr-10
-                  border-gray-300
-                  text-gray-900
-                  focus:outline-none focus:ring-gray-500 focus:border-gray-500
-                  sm:text-sm
-                  rounded-md
-                "
+                class="block w-full pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
                 placeholder="Например DOGE"
               />
             </div>
@@ -77,69 +55,25 @@
             >
               <span
                 v-on:click="setTicker(cryptoNames[0])"
-                class="
-                  inline-flex
-                  items-center
-                  px-2
-                  m-1
-                  rounded-md
-                  text-xs
-                  font-medium
-                  bg-gray-300
-                  text-gray-800
-                  cursor-pointer
-                "
+                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
               >
                 {{ cryptoNames[0] }}
               </span>
               <span
                 v-on:click="setTicker(cryptoNames[1])"
-                class="
-                  inline-flex
-                  items-center
-                  px-2
-                  m-1
-                  rounded-md
-                  text-xs
-                  font-medium
-                  bg-gray-300
-                  text-gray-800
-                  cursor-pointer
-                "
+                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
               >
                 {{ cryptoNames[1] }}
               </span>
               <span
                 v-on:click="setTicker(cryptoNames[2])"
-                class="
-                  inline-flex
-                  items-center
-                  px-2
-                  m-1
-                  rounded-md
-                  text-xs
-                  font-medium
-                  bg-gray-300
-                  text-gray-800
-                  cursor-pointer
-                "
+                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
               >
                 {{ cryptoNames[2] }}
               </span>
               <span
                 v-on:click="setTicker(cryptoNames[3])"
-                class="
-                  inline-flex
-                  items-center
-                  px-2
-                  m-1
-                  rounded-md
-                  text-xs
-                  font-medium
-                  bg-gray-300
-                  text-gray-800
-                  cursor-pointer
-                "
+                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
               >
                 {{ cryptoNames[3] }}
               </span>
@@ -155,28 +89,7 @@
         <button
           v-on:click="add(), hidePrompts()"
           type="button"
-          class="
-            my-4
-            inline-flex
-            items-center
-            py-2
-            px-4
-            border border-transparent
-            shadow-sm
-            text-sm
-            leading-4
-            font-medium
-            rounded-full
-            text-white
-            bg-gray-600
-            hover:bg-gray-700
-            transition-colors
-            duration-300
-            focus:outline-none
-            focus:ring-2
-            focus:ring-offset-2
-            focus:ring-gray-500
-          "
+          class="my-4 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
         >
           <!-- Heroicon name: solid/mail -->
           <svg
@@ -199,73 +112,21 @@
         <input
           v-model="filter"
           type="text"
-          class="
-            block
-            w-60
-            pr-10
-            border-gray-300
-            text-gray-900
-            focus:outline-none focus:ring-gray-500 focus:border-gray-500
-            sm:text-sm
-            rounded-md
-          "
+          class="block w-60 pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
           placeholder="Введите первую букву"
         />
         <div>
           <button
             v-if="page > 1"
             v-on:click="page = page - 1"
-            class="
-              mr-4
-              my-4
-              inline-flex
-              items-center
-              py-2
-              px-4
-              border border-transparent
-              shadow-sm
-              text-sm
-              leading-4
-              font-medium
-              rounded-full
-              text-white
-              bg-gray-600
-              hover:bg-gray-700
-              transition-colors
-              duration-300
-              focus:outline-none
-              focus:ring-2
-              focus:ring-offset-2
-              focus:ring-gray-500
-            "
+            class="mr-4 my-4 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
           >
             Назад
           </button>
           <button
             v-if="nextPage"
             v-on:click="page = page + 1"
-            class="
-              my-4
-              inline-flex
-              items-center
-              py-2
-              px-4
-              border border-transparent
-              shadow-sm
-              text-sm
-              leading-4
-              font-medium
-              rounded-full
-              text-white
-              bg-gray-600
-              hover:bg-gray-700
-              transition-colors
-              duration-300
-              focus:outline-none
-              focus:ring-2
-              focus:ring-offset-2
-              focus:ring-gray-500
-            "
+            class="my-4 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
           >
             Вперёд
           </button>
@@ -279,14 +140,7 @@
             :class="{
               'border-4': selectedTicker == t,
             }"
-            class="
-              bg-white
-              overflow-hidden
-              shadow
-              rounded-lg
-              border-purple-800 border-solid
-              cursor-pointer
-            "
+            class="bg-white overflow-hidden shadow rounded-lg border-purple-800 border-solid cursor-pointer"
           >
             <div class="px-4 py-5 sm:p-6 text-center">
               <dt class="text-sm font-medium text-gray-500 truncate">
@@ -299,21 +153,7 @@
             <div class="w-full border-t border-gray-200"></div>
             <button
               v-on:click.stop="handleDelete(t)"
-              class="
-                flex
-                items-center
-                justify-center
-                font-medium
-                w-full
-                bg-gray-100
-                px-4
-                py-4
-                sm:px-6
-                text-md text-gray-500
-                hover:text-gray-600 hover:bg-gray-200 hover:opacity-20
-                transition-all
-                focus:outline-none
-              "
+              class="flex items-center justify-center font-medium w-full bg-gray-100 px-4 py-4 sm:px-6 text-md text-gray-500 hover:text-gray-600 hover:bg-gray-200 hover:opacity-20 transition-all focus:outline-none"
             >
               <svg
                 class="h-5 w-5"
@@ -380,15 +220,16 @@
 </template>
 
 <script>
+import {
+  subscribeToTicker,
+  unsubscribeToTicker,
+  loadRequiredList,
+} from "./api";
 export default {
   name: "App",
 
   data() {
     return {
-      apiUrl:
-        "https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD,JPY,EUR",
-      apiKey:
-        "c3d9e7f2d667ef49e6d841bcce9c57264551b304fbbc580037e992a6563ecc86",
       ticker: null,
       selectedTicker: null,
       tickers: [],
@@ -405,13 +246,12 @@ export default {
 
   created() {
     const tickersData = localStorage.getItem("cryptonomicon-list");
-    const tickers = JSON.parse(tickersData);
-    if (tickers.length) {
-      tickers.forEach((ticker) => {
-        this.tickers.push(ticker);
-      });
+    if (tickersData) {
+      this.tickers = JSON.parse(tickersData);
       this.tickers.forEach((ticker) => {
-        this.subscribeToUpdates(ticker);
+        subscribeToTicker(ticker.name, (newPrice) => {
+          this.updateTicker(ticker.name, newPrice);
+        });
       });
     }
   },
@@ -438,7 +278,6 @@ export default {
     paginatedTickers() {
       return this.filteredTickers.slice(this.startIndex, this.endIndex);
     },
-
     normalizedGraph() {
       return this.graph.map(
         (price) =>
@@ -457,38 +296,42 @@ export default {
   },
 
   methods: {
-    subscribeToUpdates(ticker) {
-      setInterval(async () => {
-        const response = await fetch(
-          `https://min-api.cryptocompare.com/data/price?fsym=${ticker.name}&tsyms=USD&api_key=${this.apiKey}`
-        );
-        const data = await response.json();
+    updateTicker(tickerName, price) {
+      this.tickers
+        .filter((t) => t.name == tickerName)
+        .forEach((t) => {
+          t.price = price;
+        });
+    },
 
-        this.tickers.find((t) => t.name === ticker.name).price =
-          data.USD > 1 ? data?.USD?.toFixed(2) : data?.USD?.toPrecision(2);
-
-        if (this.selectedTicker.name == ticker.name) {
-          this.graph.push(data.USD);
-        }
-      }, 9000);
+    formatPrice(price) {
+      if (!price) {
+        return "-";
+      }
+      const normalizedPrice =
+        price > 1 ? price.toFixed(2) : price.toPrecision(2);
+      return normalizedPrice;
     },
 
     add() {
-      this.filter = "";
-
       const currentTicker = {
         name: this.ticker,
         price: "--",
       };
+
       this.loadList();
       this.repeatCheck();
       this.inputCheck();
 
       if (!this.findCoincidence().length && this.ticker) {
-        this.subscribeToUpdates(currentTicker);
+        subscribeToTicker(currentTicker.name, (newPrice) =>
+          this.updateTicker(currentTicker.name, newPrice)
+        );
+
         this.tickers = [...this.tickers, currentTicker];
         this.ticker = "";
       }
+      this.filter = "";
       localStorage.setItem("cryptonomicon-list", JSON.stringify(this.tickers));
     },
 
@@ -497,6 +340,7 @@ export default {
         this.select(null);
       }
       this.tickers = this.tickers.filter((t) => t != elementToDelete);
+      unsubscribeToTicker(elementToDelete.name);
     },
 
     select(ticker) {
@@ -526,13 +370,11 @@ export default {
     },
 
     async loadList() {
-      const response = await fetch(
-        "https://min-api.cryptocompare.com/data/all/coinlist?summary=true"
-      );
-      const data = await response.json();
-      Object.keys(data.Data).forEach((key) => {
-        this.cryptoNames.push(key);
-      });
+      const tickersNamesData = await loadRequiredList();
+		if(tickersNamesData.length){
+			this.cryptoNames = await this.sortPrompts(tickersNamesData);
+		}
+		return 'no data';
     },
 
     setTicker(newTicker) {
@@ -551,11 +393,8 @@ export default {
       return this.cryptoNames.filter((t) => t == this.ticker);
     },
 
-    sortPrompts() {
-      if (!this.ticker) {
-        this.loadList();
-      }
-      this.cryptoNames = this.cryptoNames.filter((el) =>
+    sortPrompts(arrToSort) {
+      return arrToSort.filter((el) =>
         el.includes(this.ticker)
       );
     },
