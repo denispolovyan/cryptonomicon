@@ -36,9 +36,12 @@
               <input
                 v-model="ticker"
                 v-on:keydown.enter="add()"
-                v-on:keydown="sortPrompts(cryptoNames)"
+                v-on:keydown="loadList()"
                 v-on:click="
-                  (showRepeatMessage = null), (showEmptyInputMessage = null)
+                  (showRepeatMessage = null),
+                    (showEmptyInputMessage = null),
+                    showPrompts = true,
+                    loadList()
                 "
                 v-on:focus="displayPrompts"
                 type="text"
@@ -50,28 +53,32 @@
             </div>
             <div
               v-on:click="loadList"
-              v-if="showPrompts && checkArrLength"
+              v-if="cryptoNames.length && showPrompts"
               class="flex bg-white shadow-md p-1 rounded-md shadow-md flex-wrap"
             >
               <span
+                v-if="cryptoNames[0]"
                 v-on:click="setTicker(cryptoNames[0])"
                 class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
               >
                 {{ cryptoNames[0] }}
               </span>
               <span
+                v-if="cryptoNames[1]"
                 v-on:click="setTicker(cryptoNames[1])"
                 class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
               >
                 {{ cryptoNames[1] }}
               </span>
               <span
+                v-if="cryptoNames[2]"
                 v-on:click="setTicker(cryptoNames[2])"
                 class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
               >
                 {{ cryptoNames[2] }}
               </span>
               <span
+                v-if="cryptoNames[3]"
                 v-on:click="setTicker(cryptoNames[3])"
                 class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
               >
@@ -87,7 +94,7 @@
           </div>
         </div>
         <button
-          v-on:click="add(), hidePrompts()"
+          v-on:click="add()"
           type="button"
           class="my-4 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
         >
@@ -238,7 +245,7 @@ export default {
       cryptoNames: [],
       showRepeatMessage: "",
       showEmptyInputMessage: "",
-      showPrompts: null,
+      showPrompts: false,
       page: 1,
       filter: "",
     };
@@ -318,15 +325,16 @@ export default {
         name: this.ticker,
         price: "--",
       };
-
+      this.showPrompts = false;
       this.loadList();
       this.repeatCheck();
       this.inputCheck();
 
       if (!this.findCoincidence().length && this.ticker) {
-        subscribeToTicker(currentTicker.name, (newPrice) =>
-          this.updateTicker(currentTicker.name, newPrice)
-        );
+        subscribeToTicker(currentTicker.name, (newPrice) => {
+          this.updateTicker(currentTicker.name, newPrice);
+          this.graph.push(newPrice);
+        });
 
         this.tickers = [...this.tickers, currentTicker];
         this.ticker = "";
@@ -370,41 +378,21 @@ export default {
     },
 
     async loadList() {
-      const tickersNamesData = await loadRequiredList();
-		if(tickersNamesData.length){
-			this.cryptoNames = await this.sortPrompts(tickersNamesData);
-		}
-		return 'no data';
+      this.cryptoNames = await loadRequiredList(this.ticker);
+      if (!this.ticker) {
+        return;
+      }
+      this.sortPrompts();
     },
 
     setTicker(newTicker) {
       this.ticker = newTicker;
     },
 
-    displayPrompts() {
-      this.showPrompts = "show";
-    },
-
-    hidePrompts() {
-      this.showPrompts = null;
-    },
-
-    addPrompts() {
-      return this.cryptoNames.filter((t) => t == this.ticker);
-    },
-
-    sortPrompts(arrToSort) {
-      return arrToSort.filter((el) =>
+    sortPrompts() {
+      this.cryptoNames = this.cryptoNames.filter((el) =>
         el.includes(this.ticker)
       );
-    },
-
-    checkArrLength() {
-      if (this.cryptoNames.length) {
-        return true;
-      } else {
-        return false;
-      }
     },
   },
 

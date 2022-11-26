@@ -61,8 +61,8 @@ export const unsubscribeToTicker = (ticker) => {
   unsubscribeToTickerOnWS(ticker);
 };
 
-export function loadRequiredList() {
-  return fetch(
+export async function loadRequiredList() {
+  return await fetch(
     "https://min-api.cryptocompare.com/data/all/coinlist?summary=true"
   )
     .then((data) => data.json())
