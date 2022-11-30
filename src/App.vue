@@ -40,7 +40,7 @@
                 v-on:click="
                   (showRepeatMessage = null),
                     (showEmptyInputMessage = null),
-                    showPrompts = true,
+                    (showPrompts = true),
                     loadList()
                 "
                 v-on:focus="displayPrompts"
@@ -154,7 +154,7 @@
                 {{ t.name }} - USD
               </dt>
               <dd class="mt-1 text-3xl font-semibold text-gray-900">
-                {{ t.price }}
+                {{ t.price || "-" }}
               </dd>
             </div>
             <div class="w-full border-t border-gray-200"></div>
@@ -184,14 +184,18 @@
         <h3 class="text-lg leading-6 font-medium text-gray-900 my-8">
           {{ selectedTicker?.name }} - USD
         </h3>
-        <div class="flex items-end border-gray-600 border-b border-l h-64">
+        <div
+          class="flex items-end border-gray-600 border-b border-l h-64"
+          ref="graph"
+        >
           <div
             v-for="(bar, idx) in normalizedGraph"
             v-bind:key="idx"
             :style="{
               height: `${bar}%`,
+              width: `${singleGraphColumnWidth}px`,
             }"
-            class="bg-purple-800 border w-10"
+            class="bg-purple-800 border"
           ></div>
         </div>
         <button
@@ -239,15 +243,17 @@ export default {
     return {
       ticker: null,
       selectedTicker: null,
+      maxGraphElements: null,
       tickers: [],
       graph: [],
       loader: [],
       cryptoNames: [],
       showRepeatMessage: "",
       showEmptyInputMessage: "",
+      filter: "",
       showPrompts: false,
       page: 1,
-      filter: "",
+      singleGraphColumnWidth: 40,
     };
   },
 
@@ -261,6 +267,14 @@ export default {
         });
       });
     }
+  },
+
+  mounted() {
+    window.addEventListener("resize", this.calculateMaxGraphElements);
+  },
+
+  beforeUnmount() {
+    window.removeEventListener("resize", this.calculateMaxGraphElements);
   },
 
   computed: {
@@ -303,11 +317,22 @@ export default {
   },
 
   methods: {
+    calculateMaxGraphElements() {
+      if (!this.$refs.graph) return;
+      this.maxGraphElements = this.$refs.graph.clientWidth / this.singleGraphColumnWidth;
+    },
     updateTicker(tickerName, price) {
       this.tickers
         .filter((t) => t.name == tickerName)
         .forEach((t) => {
           t.price = price;
+          this.graph.push(price);
+          if (t == this.selectedTicker) {
+            this.calculateMaxGraphElements();
+            while (this.graph.length > this.maxGraphElements) {
+              this.graph.shift();
+            }
+          }
         });
     },
 
@@ -333,7 +358,6 @@ export default {
       if (!this.findCoincidence().length && this.ticker) {
         subscribeToTicker(currentTicker.name, (newPrice) => {
           this.updateTicker(currentTicker.name, newPrice);
-          this.graph.push(newPrice);
         });
 
         this.tickers = [...this.tickers, currentTicker];
