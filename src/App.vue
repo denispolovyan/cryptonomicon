@@ -26,94 +26,7 @@
       </svg>
     </div>
     <div class="container">
-      <section>
-        <div class="flex">
-          <div class="max-w-xs">
-            <label for="wallet" class="block text-sm font-medium text-gray-700"
-              >Тикер</label
-            >
-            <div class="mt-1 relative rounded-md shadow-md">
-              <input
-                v-model="ticker"
-                v-on:keydown.enter="add()"
-                v-on:keydown="loadList()"
-                v-on:click="
-                  (showRepeatMessage = null),
-                    (showEmptyInputMessage = null),
-                    (showPrompts = true),
-                    loadList()
-                "
-                v-on:focus="displayPrompts"
-                type="text"
-                name="wallet"
-                id="wallet"
-                class="block w-full pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
-                placeholder="Например DOGE"
-              />
-            </div>
-            <div
-              v-on:click="loadList"
-              v-if="cryptoNames.length && showPrompts"
-              class="flex bg-white shadow-md p-1 rounded-md shadow-md flex-wrap"
-            >
-              <span
-                v-if="cryptoNames[0]"
-                v-on:click="setTicker(cryptoNames[0])"
-                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
-              >
-                {{ cryptoNames[0] }}
-              </span>
-              <span
-                v-if="cryptoNames[1]"
-                v-on:click="setTicker(cryptoNames[1])"
-                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
-              >
-                {{ cryptoNames[1] }}
-              </span>
-              <span
-                v-if="cryptoNames[2]"
-                v-on:click="setTicker(cryptoNames[2])"
-                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
-              >
-                {{ cryptoNames[2] }}
-              </span>
-              <span
-                v-if="cryptoNames[3]"
-                v-on:click="setTicker(cryptoNames[3])"
-                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
-              >
-                {{ cryptoNames[3] }}
-              </span>
-            </div>
-            <div v-if="showRepeatMessage" class="text-sm text-red-600">
-              Такой тикер уже добавлен
-            </div>
-            <div v-if="showEmptyInputMessage" class="text-sm text-red-600">
-              Введите значение в поле
-            </div>
-          </div>
-        </div>
-        <button
-          v-on:click="add()"
-          type="button"
-          class="my-4 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-        >
-          <!-- Heroicon name: solid/mail -->
-          <svg
-            class="-ml-0.5 mr-2 h-6 w-6"
-            xmlns="http://www.w3.org/2000/svg"
-            width="30"
-            height="30"
-            viewBox="0 0 24 24"
-            fill="#ffffff"
-          >
-            <path
-              d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
-            ></path>
-          </svg>
-          Добавить
-        </button>
-      </section>
+      <add-ticker @add-ticker="add" :tickers="getTickers" />
       <template v-if="tickers.length">
         <p class="mb-2 block text-sm font-medium text-gray-700">Фильтр</p>
         <input
@@ -231,30 +144,27 @@
 </template>
 
 <script>
-import {
-  subscribeToTicker,
-  unsubscribeToTicker,
-  loadRequiredList,
-} from "./api";
+import { subscribeToTicker, unsubscribeToTicker } from "./api";
+
+import AddTicker from "./components/AddTicker.vue";
+
 export default {
   name: "App",
 
   data() {
     return {
-      ticker: null,
       selectedTicker: null,
       maxGraphElements: null,
       tickers: [],
       graph: [],
       loader: [],
-      cryptoNames: [],
-      showRepeatMessage: "",
-      showEmptyInputMessage: "",
       filter: "",
-      showPrompts: false,
       page: 1,
       singleGraphColumnWidth: 40,
     };
+  },
+  components: {
+    AddTicker,
   },
 
   created() {
@@ -278,6 +188,9 @@ export default {
   },
 
   computed: {
+    getTickers() {
+      return this.tickers;
+    },
     pageStateOptions() {
       return {
         filter: this.filter,
@@ -319,7 +232,8 @@ export default {
   methods: {
     calculateMaxGraphElements() {
       if (!this.$refs.graph) return;
-      this.maxGraphElements = this.$refs.graph.clientWidth / this.singleGraphColumnWidth;
+      this.maxGraphElements =
+        this.$refs.graph.clientWidth / this.singleGraphColumnWidth;
     },
     updateTicker(tickerName, price) {
       this.tickers
@@ -345,26 +259,25 @@ export default {
       return normalizedPrice;
     },
 
-    add() {
+    add(ticker) {
       const currentTicker = {
-        name: this.ticker,
+        name: ticker,
         price: "--",
       };
-      this.showPrompts = false;
-      this.loadList();
-      this.repeatCheck();
-      this.inputCheck();
 
-      if (!this.findCoincidence().length && this.ticker) {
+      if (ticker && this.findCoincidence(ticker)) {
         subscribeToTicker(currentTicker.name, (newPrice) => {
           this.updateTicker(currentTicker.name, newPrice);
         });
 
         this.tickers = [...this.tickers, currentTicker];
         this.ticker = "";
-      }
-      this.filter = "";
-      localStorage.setItem("cryptonomicon-list", JSON.stringify(this.tickers));
+        this.filter = "";
+        localStorage.setItem(
+          "cryptonomicon-list",
+          JSON.stringify(this.tickers)
+        );
+      } else return;
     },
 
     handleDelete(elementToDelete) {
@@ -379,44 +292,13 @@ export default {
       this.selectedTicker = ticker;
     },
 
-    repeatCheck() {
-      let coincidence = this.findCoincidence();
+    findCoincidence(tickerName) {
+      let coincidence = this.tickers.filter((t) => t.name == tickerName);
       if (coincidence.length) {
-        this.showRepeatMessage = "show";
+        return false;
       } else {
-        this.showRepeatMessage = null;
+        return true;
       }
-    },
-
-    inputCheck() {
-      if (!this.ticker) {
-        this.showEmptyInputMessage = "show";
-      } else {
-        this.showEmptyInputMessage = null;
-      }
-    },
-
-    findCoincidence() {
-      let coincidence = this.tickers.filter((t) => t.name == this.ticker);
-      return coincidence;
-    },
-
-    async loadList() {
-      this.cryptoNames = await loadRequiredList(this.ticker);
-      if (!this.ticker) {
-        return;
-      }
-      this.sortPrompts();
-    },
-
-    setTicker(newTicker) {
-      this.ticker = newTicker;
-    },
-
-    sortPrompts() {
-      this.cryptoNames = this.cryptoNames.filter((el) =>
-        el.includes(this.ticker)
-      );
     },
   },
 
@@ -425,6 +307,7 @@ export default {
       localStorage.setItem("cryptonomicon-list", JSON.stringify(this.tickers));
     },
     selectedTicker() {
+      this.$nextTick().then(this.calculateMaxGraphElements());
       this.graph = [];
     },
     filter() {
