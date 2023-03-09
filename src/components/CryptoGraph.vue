@@ -16,7 +16,7 @@
         }"
         class="bg-purple-800 border"
       ></div>
-      <remove-selected-graph @click="$emit('removeSelectedGraph')"/>
+      <remove-selected-graph @click="$emit('removeSelectedGraph')" />
     </div>
   </section>
 </template>
@@ -28,16 +28,10 @@ export default {
   components: {
     RemoveSelectedGraph,
   },
-  mounted() {
-    window.addEventListener("resize", this.calculateMaxGraphElements);
-  },
 
-  beforeUnmount() {
-    window.removeEventListener("resize", this.calculateMaxGraphElements);
-  },
   data() {
     return {
-      // maxGraphElements: null,
+      maxGraphElements: null,
     };
   },
   props: {
@@ -61,6 +55,18 @@ export default {
       if (!this.$refs.graph) return;
       this.maxGraphElements =
         this.$refs.graph.clientWidth / this.singleGraphColumnWidth;
+      this.$emit("setMaxGraphElements", this.maxGraphElements);
+    },
+  },
+  watch: {
+    graph: {
+      handler() {
+			console.log(this.normalizedGraph);
+        if (!this.graph.length) {
+          this.calculateMaxGraphElements();
+        }
+      },
+      deep: true,
     },
   },
 
@@ -81,10 +87,12 @@ export default {
       );
     },
   },
-  watch: {
-    maxGraphElements() {
-      console.log(this.maxGraphElements);
-    },
+  mounted() {
+    window.addEventListener("resize", this.calculateMaxGraphElements);
+  },
+
+  beforeUnmount() {
+    window.removeEventListener("resize", this.calculateMaxGraphElements);
   },
 };
 </script>

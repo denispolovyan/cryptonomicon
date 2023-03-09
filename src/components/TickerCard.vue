@@ -51,6 +51,10 @@ export default {
       type: Array,
       required: false,
     },
+   //  selectedTicker: {
+   //    type: Object,
+   //    required: false,
+   //  },
   },
   data() {
     return {

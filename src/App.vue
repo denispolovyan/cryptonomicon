@@ -13,7 +13,7 @@
           v-model="filter"
           type="text"
           class="block w-60 pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
-          placeholder="Введите первую букву"
+          placeholder="Введіть першу літеру"
         />
         <div>
           <button
@@ -32,20 +32,22 @@
           </button>
         </div>
         <hr class="w-full border-t border-gray-600 my-4" />
-          <ticker-card
-            :tickers="tickers"
-            :paginatedTickers="paginatedTickers"
-            @handleDelete="handleDelete"
-            @selectedTicker="selectTicker"
-          />
+        <ticker-card
+          :tickers="tickers"
+          :paginatedTickers="paginatedTickers"
+          @handleDelete="handleDelete"
+          @selectedTicker="selectTicker"
+        />
         <hr class="w-full border-t border-gray-600 my-4" />
       </template>
       <crypto-graph
+        ref="graph"
         v-if="selectedTicker"
-        :ticker="getSelectedTicker"
+        :ticker="selectedTicker"
         :singleGraphColumnWidth="getGraphWidth"
-        :graph="getGraph"
+        :graph="graph"
         @removeSelectedGraph="selectedTicker = 0"
+        @setMaxGraphElements="setMaxGraphElements"
       />
     </div>
   </div>
@@ -71,14 +73,16 @@ export default {
 
   data() {
     return {
-		selectedTicker: null,
+      selectedTicker: null,
       tickers: [],
       graph: [],
       loader: [],
       filter: "",
       page: 1,
       singleGraphColumnWidth: 40,
-		maxTickerLength: 20,
+      maxTickerLength: 20,
+      maxGraphElements: null,
+      graphWidth: null,
     };
   },
   created() {
@@ -92,21 +96,16 @@ export default {
       });
     }
   },
+
   computed: {
     tooManyTickersAdded() {
       return this.tickers.length > this.maxTickerLength;
-    },
-    getGraph() {
-      return this.graph;
     },
     getGraphWidth() {
       return this.singleGraphColumnWidth;
     },
     getTickers() {
       return this.tickers;
-    },
-    getSelectedTicker() {
-      return this.selectedTicker;
     },
     pageStateOptions() {
       return {
@@ -132,10 +131,8 @@ export default {
   },
 
   methods: {
-    calculateMaxGraphElements() {
-      if (!this.$refs.graph) return;
-      this.maxGraphElements =
-        this.$refs.graph.clientWidth / this.singleGraphColumnWidth;
+    setMaxGraphElements(maxGraphElements) {
+      this.maxGraphElements = maxGraphElements;
     },
     updateTicker(tickerName, price) {
       this.tickers
@@ -143,9 +140,7 @@ export default {
         .forEach((t) => {
           t.price = price;
           this.graph.push(price);
-          //   console.log(this.graph);
           if (t == this.selectedTicker) {
-            this.calculateMaxGraphElements();
             while (this.graph.length > this.maxGraphElements) {
               this.graph.shift();
             }
@@ -163,7 +158,6 @@ export default {
     },
 
     add(ticker) {
-      console.log(this.tickers.length);
       const currentTicker = {
         name: ticker,
         price: "--",
@@ -194,7 +188,6 @@ export default {
       } else {
         return true;
       }
-		
     },
     selectTicker(ticker) {
       this.selectedTicker = ticker;
@@ -206,7 +199,6 @@ export default {
       localStorage.setItem("cryptonomicon-list", JSON.stringify(this.tickers));
     },
     selectedTicker() {
-      //  this.$nextTick().then(this.calculateMaxGraphElements());
       this.graph = [];
     },
     filter() {
