@@ -3,7 +3,7 @@
     <div class="flex">
       <div class="max-w-xs">
         <label for="wallet" class="block text-sm font-medium text-gray-700"
-          >Тикер</label
+          >Тікер</label
         >
         <div class="mt-1 relative rounded-md shadow-md">
           <input
@@ -58,14 +58,14 @@
           </span>
         </div>
         <div v-if="showRepeatMessage" class="text-sm text-red-600">
-          Такой тикер уже добавлен
+          Такий тікер вже існує
         </div>
         <div v-if="showEmptyInputMessage" class="text-sm text-red-600">
-          Введите значение в поле
+          Введіть значення в поле
         </div>
       </div>
     </div>
-    <add-button v-on:click="add()" type="button" />
+    <add-button :disabled="disabled" v-on:click="add()" type="button" />
   </section>
 </template>
 
@@ -81,6 +81,11 @@ export default {
     tickers: {
       type: Array,
       required: false,
+    },
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   emits: {
@@ -105,6 +110,7 @@ export default {
       this.loadList();
       this.repeatCheck();
       this.inputCheck();
+      this.ticker = "";
     },
 
     async loadList() {
