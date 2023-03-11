@@ -10,12 +10,7 @@
             v-model="ticker"
             v-on:keydown.enter="add()"
             v-on:keydown="loadList()"
-            v-on:click="
-              (showRepeatMessage = false),
-                (showEmptyInputMessage = false),
-                (showPrompts = true),
-                loadList()
-            "
+            v-on:click="(showPrompts = true), loadList(), clearErrorFields()"
             type="text"
             name="wallet"
             id="wallet"
@@ -127,25 +122,21 @@ export default {
 
     tickersCoincidence() {
       let coincidence = this.tickers.filter((t) => t.name == this.ticker);
-      if (coincidence.length) {
-        return true;
-      } else {
-        return false;
-      }
+      return coincidence.length ? true : false;
     },
 
     inputCheck() {
-      if (!this.ticker) {
-        this.showEmptyInputMessage = true;
-      } else {
-        this.showEmptyInputMessage = false;
-      }
+      this.showEmptyInputMessage = !this.ticker ? true : false;
     },
 
     sortPrompts() {
       this.cryptoNames = this.cryptoNames.filter((el) =>
         el.includes(this.ticker)
       );
+    },
+    clearErrorFields() {
+      this.showRepeatMessage = false;
+      this.showEmptyInputMessage = false;
     },
 
     setTicker(newTicker) {

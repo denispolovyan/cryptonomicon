@@ -39,6 +39,7 @@ export default {
       type: Object,
       required: false,
     },
+
     singleGraphColumnWidth: {
       type: Number,
       required: false,
@@ -61,7 +62,6 @@ export default {
   watch: {
     graph: {
       handler() {
-			console.log(this.normalizedGraph);
         if (!this.graph.length) {
           this.calculateMaxGraphElements();
         }

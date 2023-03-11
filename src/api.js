@@ -8,7 +8,6 @@ const socket = new WebSocket(
 const tickersHandlers = new Map();
 
 const AGGREGATE_INDEX = 5;
-// const ERROR_INDEX = '500';
 
 socket.addEventListener("message", (e) => {
   const {
@@ -59,8 +58,6 @@ export const subscribeToTicker = (ticker, cb) => {
   const subscribers = tickersHandlers.get(ticker) || [];
   tickersHandlers.set(ticker, [...subscribers, cb]);
   subscribeToTickerOnWS(ticker);
-
-//   console.log(tickersHandlers)
 };
 
 export const unsubscribeToTicker = (ticker) => {
