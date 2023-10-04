@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="flex">
+    <div>
       <div class="max-w-xs">
         <label for="wallet" class="block text-sm font-medium text-gray-700"
           >Тікер</label
@@ -60,7 +60,7 @@
         </div>
       </div>
     </div>
-    <add-button :disabled="disabled" v-on:click="add()" type="button" />
+    <add-button class="" :disabled="disabled" v-on:click="add()" type="button" />
   </section>
 </template>
 

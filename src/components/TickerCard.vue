@@ -14,7 +14,7 @@
           {{ t.name }} - USD
         </dt>
         <dd class="mt-1 text-3xl font-semibold text-gray-900">
-          {{ t.price || "-" }}
+          {{ Number((t.price)) > 1 ? Number((t.price)).toFixed(2) : Number((t.price)).toPrecision(2) || "-" }}
         </dd>
       </div>
       <div class="w-full border-t border-gray-200"></div>
@@ -53,7 +53,7 @@ export default {
     },
     currentTicker: {
       type: Object,
-		required: false,
+      required: false,
     },
   },
   data() {

@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <p class="mb-2 block text-sm font-medium text-gray-700">Фільтр</p>
+  <div >
+    <p class="mb-2 block text-sm font-medium text-gray-700 ">Фільтр</p>
     <input
       v-model="filter"
       type="text"
